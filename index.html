@@ -98,6 +98,11 @@
     color: var(--ok); border-radius: 14px; padding: 18px 20px; margin: 22px 0;
     font-size: 15px;
   }
+  .fail {
+    display: none; background: rgba(224,92,92,.1); border: 1px solid var(--alert);
+    color: var(--alert); border-radius: 14px; padding: 18px 20px; margin: 22px 0;
+    font-size: 15px;
+  }
   footer { text-align: center; color: var(--text3); font-size: 12.5px; margin-top: 40px; }
 </style>
 </head>
@@ -109,6 +114,7 @@
   </header>
 
   <div class="thanks" id="thanks">✅ <strong>¡Respuestas enviadas!</strong> Gracias — con esto podemos seguir avanzando. Si quieres cambiar algo, vuelve a rellenar y reenvía.</div>
+  <div class="fail" id="sendfail">⚠️ <strong>No se ha podido enviar por internet</strong> (el servicio de envío está caído o tu operadora lo bloquea). No pasa nada: se acaba de <strong>descargar un archivo con tus respuestas</strong> (<code>aurasys-cuestionario-respuestas.md</code>) — mándaselo a Mel por WhatsApp o email. Tus respuestas siguen guardadas en esta página.</div>
 
   <div class="intro">
     La primera ronda (tus dos Excel) resolvió casi todas las fórmulas. Aquí está <strong>solo lo que
@@ -441,7 +447,7 @@
     saveTimer = setTimeout(save, 800);
   });
 
-  document.getElementById('download').addEventListener('click', function () {
+  function downloadMd() {
     var data = snapshot();
     var md = '# AuraSys — Cuestionario 2ª ronda — respuestas del socio\n\n';
     Object.keys(data).forEach(function (k) {
@@ -453,6 +459,42 @@
     a.download = 'aurasys-cuestionario-respuestas.md';
     a.click();
     URL.revokeObjectURL(a.href);
+  }
+
+  document.getElementById('download').addEventListener('click', downloadMd);
+
+  // Envío sin salir de la página; si el servicio falla (caído o bloqueado
+  // por la operadora), se descargan las respuestas para enviarlas a mano.
+  var ENDPOINT = form.action.replace('formsubmit.co/', 'formsubmit.co/ajax/');
+  form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var btn = form.querySelector('.primary');
+    btn.disabled = true;
+    btn.textContent = 'Enviando…';
+    var ctrl = new AbortController();
+    var timer = setTimeout(function () { ctrl.abort(); }, 15000);
+    fetch(ENDPOINT, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' },
+      signal: ctrl.signal
+    }).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }).then(function () {
+      document.getElementById('thanks').style.display = 'block';
+      document.getElementById('sendfail').style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }).catch(function () {
+      document.getElementById('sendfail').style.display = 'block';
+      document.getElementById('thanks').style.display = 'none';
+      downloadMd();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }).finally(function () {
+      clearTimeout(timer);
+      btn.disabled = false;
+      btn.textContent = '📨 Enviar respuestas';
+    });
   });
 
   restore();
