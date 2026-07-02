@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>AuraSys — Cuestionario 2ª ronda</title>
+<style>
+  :root {
+    --bg: #0a0a0c;
+    --surface: #131318;
+    --surface2: #1b1b22;
+    --border: #2a2a33;
+    --gold: #d4af37;
+    --gold-deep: #8a6a1e;
+    --text: #f0ede6;
+    --text2: #b8b4a9;
+    --text3: #7d7a72;
+    --ok: #4caf7d;
+    --warn: #e0b64f;
+    --alert: #e05c5c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 24px 16px 96px; }
+  header { text-align: center; padding: 32px 0 8px; }
+  .logo {
+    font-size: 30px; font-weight: 700; letter-spacing: 2px;
+    background: linear-gradient(120deg, var(--gold) 20%, #f2e39a 50%, var(--gold-deep) 85%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .subtitle { color: var(--text2); margin-top: 6px; font-size: 15px; }
+  .intro {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px 20px; margin: 22px 0; color: var(--text2); font-size: 14.5px;
+  }
+  .intro strong { color: var(--text); }
+  .badge {
+    display: inline-block; font-size: 11.5px; font-weight: 600; letter-spacing: .4px;
+    border-radius: 999px; padding: 3px 10px; margin-bottom: 10px; text-transform: uppercase;
+  }
+  .b-red { background: rgba(224,92,92,.14); color: var(--alert); border: 1px solid rgba(224,92,92,.4); }
+  .b-yellow { background: rgba(224,182,79,.12); color: var(--warn); border: 1px solid rgba(224,182,79,.4); }
+  .b-white { background: rgba(240,237,230,.07); color: var(--text2); border: 1px solid var(--border); }
+  section {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 22px 22px 16px; margin: 18px 0;
+  }
+  section h2 { margin: 0 0 4px; font-size: 18px; color: var(--text); }
+  .ctx { color: var(--text3); font-size: 13.5px; margin: 6px 0 14px; }
+  .unlock { color: var(--gold); font-size: 12.5px; margin-top: 4px; }
+  .q { margin: 18px 0 4px; }
+  .q-label { font-weight: 600; font-size: 15px; margin-bottom: 8px; display: block; }
+  textarea, input[type=text] {
+    width: 100%; background: var(--surface2); color: var(--text);
+    border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;
+    font: inherit; font-size: 14.5px; resize: vertical;
+  }
+  textarea { min-height: 74px; }
+  textarea:focus, input[type=text]:focus { outline: none; border-color: var(--gold); }
+  .opts { display: flex; flex-direction: column; gap: 8px; margin: 4px 0 8px; }
+  .opt {
+    display: flex; align-items: flex-start; gap: 10px; background: var(--surface2);
+    border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;
+    cursor: pointer; font-size: 14.5px;
+  }
+  .opt:has(input:checked) { border-color: var(--gold); background: rgba(212,175,55,.07); }
+  .opt input { accent-color: var(--gold); margin-top: 2px; flex-shrink: 0; }
+  .hint { color: var(--text3); font-size: 12.5px; margin-top: 6px; }
+  .actions { margin-top: 34px; display: flex; flex-direction: column; gap: 12px; }
+  button {
+    font: inherit; font-weight: 600; border-radius: 12px; padding: 14px 18px;
+    cursor: pointer; font-size: 15.5px;
+  }
+  .primary {
+    background: linear-gradient(120deg, var(--gold), #c9a22f);
+    color: #17130a; border: none;
+  }
+  .primary:hover { filter: brightness(1.08); }
+  .secondary {
+    background: transparent; color: var(--text2); border: 1px solid var(--border);
+  }
+  .secondary:hover { border-color: var(--gold); color: var(--gold); }
+  .savebar {
+    position: fixed; bottom: 14px; right: 16px; font-size: 12.5px; color: var(--text3);
+    background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
+    padding: 6px 14px; opacity: 0; transition: opacity .3s;
+  }
+  .savebar.show { opacity: 1; }
+  .thanks {
+    display: none; background: rgba(76,175,125,.1); border: 1px solid var(--ok);
+    color: var(--ok); border-radius: 14px; padding: 18px 20px; margin: 22px 0;
+    font-size: 15px;
+  }
+  footer { text-align: center; color: var(--text3); font-size: 12.5px; margin-top: 40px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">AURASYS</div>
+    <div class="subtitle">Cuestionario 2ª ronda — decisiones pendientes para terminar la app</div>
+  </header>
+
+  <div class="thanks" id="thanks">✅ <strong>¡Respuestas enviadas!</strong> Gracias — con esto podemos seguir avanzando. Si quieres cambiar algo, vuelve a rellenar y reenvía.</div>
+
+  <div class="intro">
+    La primera ronda (tus dos Excel) resolvió casi todas las fórmulas. Aquí está <strong>solo lo que
+    queda por decidir</strong>, ordenado por impacto: lo de arriba nos desbloquea más trabajo.
+    <br><br>
+    Responde lo que puedas — si algo no lo tienes claro, escribe <strong>«no sé, decide tú»</strong> y
+    propondremos un valor por defecto (todo será personalizable después). Tus respuestas se
+    <strong>guardan solas en este navegador</strong>: puedes cerrar y seguir otro día. Al terminar,
+    pulsa <strong>Enviar respuestas</strong>.
+  </div>
+
+  <form id="form" action="https://formsubmit.co/mcara@globalsystem.es" method="POST">
+    <input type="hidden" name="_subject" value="AuraSys — Cuestionario 2ª ronda (respuestas del socio)">
+    <input type="hidden" name="_template" value="box">
+    <input type="hidden" name="_captcha" value="false">
+    <input type="hidden" name="_next" id="nextUrl" value="">
+
+    <!-- 1 -->
+    <section>
+      <span class="badge b-red">🔴 Nos tiene parados</span>
+      <h2>1 · Índice de estrés por grupo muscular</h2>
+      <p class="ctx">El «stress index» de tu Excel de entrenamiento vive en una función personalizada
+      de Google Sheets. Al exportar a Excel, el código de esa función no viaja — es lo único de
+      fórmulas que nos falta.</p>
+      <div class="q">
+        <label class="q-label">1.1 — ¿Puedes compartirnos el Google Sheet original (con acceso de lectura vale) o pegar aquí el código de la función del stress index?</label>
+        <textarea name="1.1 Stress index — enlace al Sheet o código" placeholder="Enlace al Sheet, o el código de la función…"></textarea>
+      </div>
+      <div class="q">
+        <label class="q-label">1.2 — Cuando un ejercicio trabaja varios grupos musculares (p. ej. press banca: pecho principal; tríceps y hombro secundarios), ¿cómo repartes el estrés?</label>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="1.2 Reparto multi-grupo" value="Principal entero, secundarios una fracción">El principal cuenta entero y los secundarios una fracción</label>
+          <label class="opt"><input type="radio" name="1.2 Reparto multi-grupo" value="Todos cuentan entero">Todos cuentan entero</label>
+          <label class="opt"><input type="radio" name="1.2 Reparto multi-grupo" value="Otro (ver detalle)">Otro criterio</label>
+        </div>
+        <input type="text" name="1.2b Detalle del reparto" placeholder="Si es una fracción, ¿cuál? (p. ej. secundarios al 50 %) · o describe tu criterio">
+      </div>
+      <p class="unlock">Desbloquea: toda la analítica de entrenamiento.</p>
+    </section>
+
+    <!-- 2 -->
+    <section>
+      <span class="badge b-red">🔴 Nos tiene parados</span>
+      <h2>2 · Protección de datos (RGPD) — fotos, peso y salud</h2>
+      <p class="ctx">La app guarda fotos de progreso y datos de salud. No podemos activar el
+      almacenamiento de fotos sin consentimiento y política de privacidad (probablemente con un asesor).</p>
+      <div class="q">
+        <label class="q-label">2.1 — ¿Tenéis ya texto de consentimiento y política de privacidad, o los redacta un asesor? ¿Para cuándo?</label>
+        <textarea name="2.1 RGPD — consentimiento y política"></textarea>
+      </div>
+      <div class="q">
+        <label class="q-label">2.2 — ¿Quién figura como responsable del tratamiento (tu empresa)?</label>
+        <input type="text" name="2.2 RGPD — responsable del tratamiento">
+      </div>
+      <div class="q">
+        <label class="q-label">2.3 — ¿El alojamiento de datos en la UE es requisito firme? (Es lo previsto.)</label>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="2.3 Alojamiento UE" value="Sí, UE obligatorio">Sí, UE obligatorio</label>
+          <label class="opt"><input type="radio" name="2.3 Alojamiento UE" value="Indiferente">Indiferente</label>
+        </div>
+      </div>
+      <p class="unlock">Desbloquea: fotos de progreso y del check-in + consentimiento al registrarse el cliente.</p>
+    </section>
+
+    <!-- 3 -->
+    <section>
+      <span class="badge b-yellow">🟡 Destraba una parte</span>
+      <h2>3 · Cuestionario inicial del cliente</h2>
+      <p class="ctx">Ya transcribimos tu cuestionario del Excel (5 bloques). Faltan dos cosas para
+      activar el flujo «cuestionario completo → siguiente paso».</p>
+      <div class="q">
+        <label class="q-label">3.1 — ¿Añadimos un bloque de mentalidad / relación con la comida?</label>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="3.1 Bloque mentalidad" value="Sin bloque (como el Excel)">Sin bloque de mentalidad (como tu Excel)</label>
+          <label class="opt"><input type="radio" name="3.1 Bloque mentalidad" value="Sí, añadirlo">Sí, añadirlo</label>
+        </div>
+        <input type="text" name="3.1b Preguntas de mentalidad" placeholder="Si lo añadimos: ¿qué preguntas?">
+      </div>
+      <div class="q">
+        <label class="q-label">3.2 — La lista de preguntas es exactamente la de tu Excel (hoja «Cuestionario inicial»). ¿La das por buena, o quieres añadir/quitar/reordenar algo?</label>
+        <textarea name="3.2 Validación lista de preguntas" placeholder="«Vale tal cual» o los cambios que quieras…"></textarea>
+      </div>
+      <p class="unlock">Desbloquea: el flujo del cuestionario (pendiente → completo → revisado).</p>
+    </section>
+
+    <!-- 4 -->
+    <section>
+      <span class="badge b-yellow">🟡 Destraba una parte</span>
+      <h2>4 · Ficha del cliente: indicadores de un vistazo</h2>
+      <p class="ctx">En tu listado de clientes podemos mostrar 3–5 indicadores rápidos para saber cómo
+      va cada uno sin abrir su ficha.</p>
+      <div class="q">
+        <label class="q-label">4.1 — ¿Qué 3–5 indicadores quieres ver por cliente? (Ejemplos: adherencia al plan, tendencia de peso, días desde el último check-in, % graso actual, sesiones completadas esta semana.)</label>
+        <textarea name="4.1 Indicadores de la ficha"></textarea>
+      </div>
+      <div class="q">
+        <label class="q-label">4.2 — Para cada uno: ¿cómo se calcula y con qué colores? (Semáforo verde/ámbar/rojo — dinos umbrales, p. ej. «rojo si lleva más de 10 días sin check-in».)</label>
+        <textarea name="4.2 Cálculo y umbrales de semáforo"></textarea>
+      </div>
+      <p class="unlock">Desbloquea: el panel de clientes deja de ser solo una lista.</p>
+    </section>
+
+    <!-- 5 -->
+    <section>
+      <span class="badge b-yellow">🟡 Destraba una parte</span>
+      <h2>5 · % graso: protocolos y sitios de medición</h2>
+      <p class="ctx">Tu fórmula de 6 pliegues ya está como protocolo por defecto. Pediste que el
+      profesional pueda elegir otras (3 pliegues, 7 pliegues…).</p>
+      <div class="q">
+        <label class="q-label">5.1 — ¿Qué protocolos ofrecemos de partida además del tuyo? (Vale con el nombre estándar, p. ej. «Jackson-Pollock 3 pliegues», y lo preparamos para que lo valides.)</label>
+        <textarea name="5.1 Protocolos de % graso"></textarea>
+      </div>
+      <div class="q">
+        <label class="q-label">5.2 — Confirma la lista de sitios de medición (sacada de tu Excel). ¿Sobra o falta alguno?<br>
+        <span class="hint">Perímetros: antebrazo, brazo relajado, brazo contraído, cintura escapular, pecho, cintura estrecha, cintura ancha, cadera, aductor, cuádriceps, gemelo · Pliegues: tricipital, bicipital, subescapular, axilar, pectoral, abdominal, suprailíaco, muslo, gemelo</span></label>
+        <textarea name="5.2 Sitios de medición" placeholder="«Correcta» o los cambios…"></textarea>
+      </div>
+      <p class="unlock">Desbloquea: cálculo automático del % graso al meter los pliegues.</p>
+    </section>
+
+    <!-- 6 -->
+    <section>
+      <span class="badge b-yellow">🟡 Destraba una parte</span>
+      <h2>6 · Lista de la compra: 4 detalles finales</h2>
+      <p class="ctx">Ya funciona: el cliente elige semana o mes, indica sus días de entreno y una opción
+      por comida, y la app suma cuánto comprar de cada alimento. Quedan 4 detalles de presentación.</p>
+      <div class="q">
+        <label class="q-label">6.1 — ¿En qué orden se muestra la lista?</label>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="6.1 Orden de la lista" value="Por grupo de alimento">Por grupo de alimento (carnes, pescados, lácteos…)</label>
+          <label class="opt"><input type="radio" name="6.1 Orden de la lista" value="Alfabético">Alfabético</label>
+          <label class="opt"><input type="radio" name="6.1 Orden de la lista" value="Por cantidad">Por cantidad (de más a menos)</label>
+        </div>
+      </div>
+      <div class="q">
+        <label class="q-label">6.2 — Además de la cantidad, ¿ver kcal y macros por alimento?</label>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="6.2 Columnas de la lista" value="Solo cantidad">Solo cantidad (más limpia)</label>
+          <label class="opt"><input type="radio" name="6.2 Columnas de la lista" value="Cantidad + kcal">Cantidad + kcal</label>
+          <label class="opt"><input type="radio" name="6.2 Columnas de la lista" value="Cantidad + kcal + macros">Cantidad + kcal + macros</label>
+        </div>
+      </div>
+      <div class="q">
+        <label class="q-label">6.3 — Si el cliente va a comer una equivalencia en vez del alimento principal, ¿puede elegirla también en la lista (para que sume el sustituto)?</label>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="6.3 Equivalencias en la lista" value="Sí">Sí</label>
+          <label class="opt"><input type="radio" name="6.3 Equivalencias en la lista" value="No, con el principal basta">No, con el principal basta</label>
+        </div>
+      </div>
+      <div class="q">
+        <label class="q-label">6.4 — «Mes» hoy = 4 semanas exactas (28 días). ¿Lo dejamos así?</label>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="6.4 Definición de mes" value="4 semanas (28 días)">4 semanas (28 días)</label>
+          <label class="opt"><input type="radio" name="6.4 Definición de mes" value="Mes natural (30/31 días)">Mes natural (30/31 días)</label>
+        </div>
+      </div>
+      <p class="unlock">Cierra: la lista de la compra al completo.</p>
+    </section>
+
+    <!-- 7 -->
+    <section>
+      <span class="badge b-yellow">🟡 Destraba una parte</span>
+      <h2>7 · Alergias vs «no me gusta»</h2>
+      <p class="ctx">El cliente marca en tu lista de alimentos sus alergias/intolerancias y lo que
+      rechaza por gusto. Cuando pautas uno marcado, la app reacciona.</p>
+      <div class="q">
+        <label class="q-label">7.1 — ¿Cómo lo quieres?</label>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="7.1 Alergias vs gustos" value="Alergia = veto duro; no-me-gusta = aviso">Alergia = <strong>veto duro</strong> (no deja pautar ese alimento) · «no me gusta» = <strong>aviso</strong> que puedes ignorar</label>
+          <label class="opt"><input type="radio" name="7.1 Alergias vs gustos" value="Ambos solo como aviso">Ambos solo como aviso</label>
+          <label class="opt"><input type="radio" name="7.1 Alergias vs gustos" value="Otro (ver detalle)">Otro</label>
+        </div>
+        <input type="text" name="7.1b Detalle alergias" placeholder="Si «otro», descríbelo">
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section>
+      <span class="badge b-yellow">🟡 Destraba una parte</span>
+      <h2>8 · App del cliente: qué registra en su día a día</h2>
+      <p class="ctx">El cliente ya ve su rutina, su pauta y su progreso. Falta decidir qué puede
+      <strong>registrar</strong> él desde el móvil.</p>
+      <div class="q">
+        <label class="q-label">8.1 — En el entrenamiento: ¿apunta peso y repeticiones de cada serie en la app (como en tu Excel)? ¿Algo más (RIR real, notas, temporizador de descanso)?</label>
+        <textarea name="8.1 Registro de entrenamiento del cliente"></textarea>
+      </div>
+      <div class="q">
+        <label class="q-label">8.2 — En la nutrición: ¿marca cada día qué opción de comida eligió (y ves su adherencia real), o con el reporte semanal basta?</label>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="8.2 Registro diario de comidas" value="Sí, registro diario">Sí, registro diario de la opción elegida</label>
+          <label class="opt"><input type="radio" name="8.2 Registro diario de comidas" value="No, basta el check-in semanal">No, con el check-in semanal basta</label>
+        </div>
+      </div>
+      <div class="q">
+        <label class="q-label">8.3 — ¿Puede subir fotos de progreso él mismo entre check-ins, o solo en el check-in semanal?</label>
+        <textarea name="8.3 Fotos entre check-ins"></textarea>
+      </div>
+      <p class="unlock">Desbloquea: la interacción del cliente con la app.</p>
+    </section>
+
+    <!-- 9 -->
+    <section>
+      <span class="badge b-yellow">🟡 Destraba una parte</span>
+      <h2>9 · Check-in semanal: sugerencia de progresión</h2>
+      <p class="ctx">Al revisar un check-in, la app puede <strong>sugerirte</strong> el siguiente ajuste
+      (subir/bajar calorías, cambiar cargas…) según tu criterio — y tú decides.</p>
+      <div class="q">
+        <label class="q-label">9.1 — ¿Con qué reglas decides hoy los ajustes tras un check-in? Cuéntalo con tus palabras, como se lo explicarías a un becario. (P. ej.: «si el peso baja más de X % dos semanas seguidas, subo Y kcal»; «si completa todas las series con RIR alto, subo carga».)</label>
+        <textarea name="9.1 Reglas de progresión" style="min-height:110px"></textarea>
+      </div>
+      <p class="unlock">Desbloquea: la sugerencia automática de progresión (la revisión manual ya funciona).</p>
+    </section>
+
+    <!-- 10 -->
+    <section>
+      <span class="badge b-white">⚪ No urge</span>
+      <h2>10 · %1RM como opción</h2>
+      <p class="ctx">Tu método prescribe por RIR y así queda por defecto. Si algún profesional quiere
+      trabajar con %1RM:</p>
+      <div class="q">
+        <label class="q-label">¿Qué método de estimación de 1RM ofrecemos? (Epley, Brzycki, tu propia tabla…)</label>
+        <input type="text" name="10 Metodo de estimacion 1RM">
+      </div>
+    </section>
+
+    <!-- 11 -->
+    <section>
+      <span class="badge b-white">⚪ No urge</span>
+      <h2>11 · Catálogos compartidos entre profesionales</h2>
+      <p class="ctx">De cara al futuro SaaS:</p>
+      <div class="q">
+        <label class="q-label">¿Un profesional podrá publicar su catálogo de alimentos/ejercicios para que otros lo usen, o cada uno siempre con el suyo?</label>
+        <textarea name="11 Catalogos compartidos"></textarea>
+      </div>
+    </section>
+
+    <!-- 12 -->
+    <section>
+      <span class="badge b-white">⚪ No urge</span>
+      <h2>12 · Logo</h2>
+      <p class="ctx">El acento corporativo ya es oro champán sobre tema oscuro. El logo actual sigue
+      siendo provisional.</p>
+      <div class="q">
+        <label class="q-label">¿Tienes logo definitivo (idealmente en dorado, PNG con fondo transparente) o lo diseñamos? Si lo tienes, envíalo por email o WhatsApp.</label>
+        <textarea name="12 Logo"></textarea>
+      </div>
+    </section>
+
+    <section>
+      <h2>✅ Antes de enviar — cosas que adjuntar aparte (si las tienes)</h2>
+      <p class="ctx">Estas tres no caben en un formulario; mándalas por email o WhatsApp:</p>
+      <div class="opts">
+        <label class="opt"><input type="checkbox" name="Checklist" value="Compartiré el Google Sheet / código stress index">Acceso al <strong>Google Sheet</strong> de entrenamiento (o el código del stress index) → pregunta 1</label>
+        <label class="opt"><input type="checkbox" name="Checklist" value="Enviaré textos RGPD o contacto del asesor">Texto de <strong>consentimiento</strong> y política de privacidad (o contacto del asesor) → pregunta 2</label>
+        <label class="opt"><input type="checkbox" name="Checklist" value="Enviaré el logo">El <strong>logo</strong> definitivo (PNG fondo transparente) → pregunta 12</label>
+      </div>
+      <div class="q">
+        <label class="q-label">¿Algo más que quieras comentar?</label>
+        <textarea name="Comentario final"></textarea>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button type="submit" class="primary">📨 Enviar respuestas</button>
+      <button type="button" class="secondary" id="download">💾 Descargar mis respuestas (por si falla el envío)</button>
+    </div>
+  </form>
+
+  <footer>AuraSys · cuestionario interno · tus respuestas solo se envían al equipo</footer>
+</div>
+
+<div class="savebar" id="savebar">Guardado ✓</div>
+
+<script>
+(function () {
+  var KEY = 'aurasys-cuestionario-v1';
+  var form = document.getElementById('form');
+  var savebar = document.getElementById('savebar');
+  var saveTimer, hideTimer;
+
+  document.getElementById('nextUrl').value =
+    location.origin + location.pathname + '?gracias=1';
+
+  if (new URLSearchParams(location.search).get('gracias')) {
+    document.getElementById('thanks').style.display = 'block';
+    window.scrollTo(0, 0);
+  }
+
+  function snapshot() {
+    var data = {};
+    Array.prototype.forEach.call(form.elements, function (el) {
+      if (!el.name || el.name.charAt(0) === '_') return;
+      if (el.type === 'radio' || el.type === 'checkbox') {
+        if (el.checked) {
+          if (!data[el.name]) data[el.name] = [];
+          data[el.name].push(el.value);
+        }
+      } else if (el.value.trim()) {
+        data[el.name] = [el.value];
+      }
+    });
+    return data;
+  }
+
+  function restore() {
+    var raw = localStorage.getItem(KEY);
+    if (!raw) return;
+    try {
+      var data = JSON.parse(raw);
+      Array.prototype.forEach.call(form.elements, function (el) {
+        if (!el.name || !data[el.name]) return;
+        if (el.type === 'radio' || el.type === 'checkbox') {
+          if (data[el.name].indexOf(el.value) !== -1) el.checked = true;
+        } else {
+          el.value = data[el.name][0];
+        }
+      });
+    } catch (e) { /* almacenamiento corrupto: se ignora */ }
+  }
+
+  function save() {
+    localStorage.setItem(KEY, JSON.stringify(snapshot()));
+    savebar.classList.add('show');
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(function () { savebar.classList.remove('show'); }, 1500);
+  }
+
+  form.addEventListener('input', function () {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(save, 800);
+  });
+
+  document.getElementById('download').addEventListener('click', function () {
+    var data = snapshot();
+    var md = '# AuraSys — Cuestionario 2ª ronda — respuestas del socio\n\n';
+    Object.keys(data).forEach(function (k) {
+      md += '## ' + k + '\n' + data[k].join('\n- ') + '\n\n';
+    });
+    var blob = new Blob([md], { type: 'text/markdown' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'aurasys-cuestionario-respuestas.md';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  restore();
+})();
+</script>
+</body>
+</html>
